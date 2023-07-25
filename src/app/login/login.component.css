@@ -1,0 +1,35 @@
+.page-auth {
+    background-color: #eceeef;
+    min-height: 100%;
+    background: url('../../assets/images/login-banner.jpg') no-repeat center center fixed;
+    background-size: cover;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-auth .main-body {
+    max-width: 480px;
+}
+
+.page-auth .card {
+    box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 2px;
+    margin: 1rem;
+}
+
+.page-auth .card .card-content {
+    text-align: center;
+}
+
+.page-auth .logo {
+    padding: 2rem 3rem 0;
+}
+
+.page-auth .card .card-content hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}

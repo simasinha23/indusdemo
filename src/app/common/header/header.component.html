@@ -1,0 +1,33 @@
+<mat-toolbar color="primary" class="custom-header">
+  <div class="d-flex align-items-center justify-content-between w-100">
+    <div class="d-flex align-items-center">
+      <button mat-button (click)="sidenavToggle()" class="hamburger-icon">
+        <div></div>
+        <div></div>
+        <div></div>
+      </button>
+      <h3><a [routerLink]="['/pages/home']"><img src={{image_url}} alt="" width="20" /> {{ title }}</a></h3>
+    </div>
+    <div>
+      <ul class="d-flex align-items-center right-nav">
+        <!-- <li><span style="font-weight: bold;">Welcome </span>{{profile?.userPrincipalName}}</li> -->
+        <li>
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="" class="p-0 mx-3">
+            <img src="https://cdn.pixabay.com/photo/2015/03/04/22/35/head-659651__340.png" alt=""
+              class="rounded profile-image" width="40">
+          </button>
+          <mat-menu #menu="matMenu" class="logout-select">
+            <button mat-menu-item>
+              <!-- <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="logout"></mat-icon> -->
+              Logout
+            </button>
+            <!-- <button (click)="logout()" mat-menu-item>
+              <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="logout"></mat-icon>
+              Logout
+            </button> -->
+          </mat-menu>
+        </li>
+      </ul>
+    </div>
+  </div>
+</mat-toolbar>

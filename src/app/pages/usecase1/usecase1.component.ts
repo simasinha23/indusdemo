@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm, Valida
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatOption } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
+// import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { ApiServiceService } from 'src/app/api-service.service';
@@ -15,21 +16,21 @@ import { ApiServiceService } from 'src/app/api-service.service';
 export class Usecase1Component implements OnInit{
   myControl1 = new FormControl('');
   myControl2 = new FormControl('');
+  myControl3 = new FormControl('');
   deviceList: string[] = [
-    'IN-3180375',
-    'IN-3178371',
-    'IN-3176535',
-   ' IN-3175677',
-    'IN-3168583',
-   ' IN-3168599',
-    'IN-3168573',
-    'IN-3168576',
-    'IN-3161553',
-    'IN-3055155',
-    'IN-3180375',
-    'IN-3178371'
-  ];
+  'IN-3180375',
+  'IN-3176535',
+  'IN-3175677',
+  'IN-3168583',
+  'IN-3168599',
+  'IN-3168573',
+  'IN-3168576',
+  'IN-3161553',
+  'IN-3055155',
+  'IN-3180375',
+  'IN-3178371'];
   parameterList: string[] = [];
+  actionParameterList: string[] = [];
   actionStatus: boolean = false;
   currentDataStatus: boolean = false;
   previousDataStatus: boolean = false;
@@ -37,38 +38,37 @@ export class Usecase1Component implements OnInit{
   setParameterStatus:boolean = false;
   myForm: FormGroup;
   currentValue: number;
+  previousValue: any;
   setRuleDefaultButton: boolean = true;
   filteredDeviceOptions: Observable<string[]>;
   filteredParameterOptions: Observable<string[]>
+  filteredActionParameterOptions: Observable<string[]>
+  msg:any='';
 
   constructor(public dialog: MatDialog, private apiService: ApiServiceService, 
-    private formBuilder: FormBuilder) { }
+    private formBuilder: FormBuilder, 
+    // private toastr: ToastrService
+    ) { }
 
   ngOnInit() {
-    const postData = {"siteid": "IN-3005081","param": "SolarPanelCapacity"};
-    this.apiService.fetchPreviousData(postData).subscribe(res => {
-      
-    });
-
     this.myForm = this.formBuilder.group({
       deviceId: new FormControl(''),
       deviceName: this.myControl1,
       parameterName: this.myControl2,
       operators: [''],
       inputValue: [''],
-      email: new FormControl(''),
+      email: ['', [Validators.email,Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
       setInput: new FormControl(''),
-      parameter: new FormControl(''),
+      parameter: this.myControl3,
     })
 
     this.filteredDeviceOptions = this.myControl1.valueChanges.pipe(
       startWith(''),
       map(value => this._filterDeviceList(value || '')),
     );
-
-    
-
   }
+
+  get f() { return this.myForm.controls; }
 
   
 
@@ -85,12 +85,19 @@ export class Usecase1Component implements OnInit{
 
   OnDeviceSelected(option: MatOption) {
     this.currentDataStatus = false;
+    this.previousDataStatus = false;
     this.currentValue = 0;
     this.apiService.getDeviceId(option.value).subscribe(res => {
       const sucess = ((JSON.parse(JSON.stringify(res)) || {}).id || {}).id;
+      console.log(sucess)
       this.myForm.patchValue({
         deviceId: sucess,
-        parameterName: ''
+        parameterName: '',
+        operators: '',
+        inputValue: '',
+        email: '',
+        setInput: '',
+        parameter: '',
       })
       this.getParametersList(sucess);
       if(this.myForm.value.deviceId != '' && this.myForm.value.parameterName !=''){
@@ -102,10 +109,16 @@ export class Usecase1Component implements OnInit{
   getParametersList(value: any){
     this.apiService.getParameterList(value).subscribe(response => {      
       this.parameterList = response;
+      this.actionParameterList = response;
       this.filteredParameterOptions = this.myControl2.valueChanges.pipe(
         startWith(''),
         map(value => this._filterParameterList(value || '')),
       );
+      this.filteredActionParameterOptions = this.myControl3.valueChanges.pipe(
+        startWith(''),
+        map(value => this._filterActionParameterList(value || '')),
+      );
+      
       // console.log(this.parameterList)
     })
   }
@@ -113,6 +126,19 @@ export class Usecase1Component implements OnInit{
   OnParameterselected(option: MatOption){
     const parameter = option.value;
     // this.fetchCurrentData(this.myForm.value.deviceId, this.myForm.value.parameterName);
+  }
+
+  OnActionParameterselected(option: MatOption){
+    const parameter = option.value;
+    this.myForm.patchValue({
+      email: ''
+    })
+  }
+  onEmailChange(event: any){
+    this.myForm.patchValue({
+      setInput: '',
+      parameter: ''
+    })
   }
 
   submitForm(){
@@ -138,6 +164,43 @@ export class Usecase1Component implements OnInit{
     if (this.currentDataStatus && this.previousDataStatus) {
       this.actionStatus = true;
     }
+    const postData = {
+      "siteid": this.myForm.value.deviceName, 
+      "param": this.myForm.value.parameterName
+    };
+    this.apiService.fetchPreviousData(postData).subscribe(res => {
+      this.previousValue = res;
+    });
+  }
+
+  setRule(){
+    let postData = {
+      "siteid": this.myForm.value.deviceName, 
+      "param": this.myForm.value.parameterName, 
+      "operator": this.myForm.value.operators, 
+      "value": this.myForm.value.inputValue, 
+      "emailid": this.myForm.value.email, 
+      "setparam": this.myForm.value.setInput, 
+      "setvalue": this.myForm.value.parameter
+    }
+    this.apiService.setRule(postData).subscribe(res => {
+      if(res == true){
+        this.myForm.reset();
+        this.msg='Set rule inserted successfully'
+        // this.toastr.success("Success",'Set rule inserted',{
+        //   progressBar: true,
+        //   progressAnimation:"decreasing"
+        // });
+      }
+      else{
+        this.msg='Set rule not inserted'
+        // this.toastr.error("Error",'Set rule not inserted',{
+        //   progressBar: true,
+        //   progressAnimation:"decreasing"
+        // });
+      }
+      
+    });
   }
 
   openDialog() {
@@ -185,8 +248,14 @@ export class Usecase1Component implements OnInit{
   private _filterParameterList(value: string): string[] {
     const filterValue = value.toLowerCase();
     let arr = this.parameterList.filter(option => option.toLowerCase().indexOf(filterValue.toLowerCase()) === 0);
+    return arr.length ? arr : ["No Item found" , 'immutable']; 
+  }
+  private _filterActionParameterList(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    let arr = this.actionParameterList.filter(option => option.toLowerCase().indexOf(filterValue.toLowerCase()) === 0);
     return arr.length ? arr : ["No Item found"]; 
   }
+  
 }
 
 

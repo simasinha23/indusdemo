@@ -1,8 +1,8 @@
 <div class="row justify-content-between">
-    <p>Set a Rule</p>
+    <p>Device Set Rule</p>
     <form class="example-form row align-items-center mt-3" [formGroup]="myForm">
     <div class="row">
-        <div class="col-lg-3 col-md-12">            
+        <div class="col-3">            
                 <mat-form-field class="example-full-width w-100">
                     <mat-label>Choose Device</mat-label>
                     <input type="text" placeholder="" aria-label="Device" matInput
@@ -14,7 +14,7 @@
                     </mat-autocomplete>
                 </mat-form-field>            
         </div>
-        <div class="col-lg-3 col-md-12">
+        <div class="col-3">
             <mat-form-field class="example-full-width w-100">
                 <mat-label>Choose Parameter</mat-label>
                 <input type="text" placeholder="" aria-label="Parameter" matInput
@@ -26,7 +26,7 @@
                 </mat-autocomplete>
             </mat-form-field>
         </div>
-        <div class="col-lg-3 col-md-12">
+        <div class="col-3">
             <!-- <span class="text-body-tertiary">Set Rule</span> -->
           <!-- <form class="example-form row align-items-center mt-3"> -->
             <mat-form-field class="example-full-width w-100">
@@ -50,7 +50,7 @@
     
             <!-- </form> -->
         </div>
-        <div class="col-lg-3 col-md-12">
+        <div class="col-3">
             <mat-form-field class="example-full-width w-100">
                 <mat-label>Input Value</mat-label>
                 <input matInput placeholder="Input Value" value="" formControlName="inputValue">
@@ -70,7 +70,10 @@
             <!-- <form class="example-form"> -->
                 <mat-form-field class="example-full-width w-100">
                     <mat-label>Email Address</mat-label>
-                    <input matInput placeholder="" value="" formControlName="email">
+                    <input matInput placeholder="" value="" formControlName="email" [ngClass]="{ 'is-invalid': f['email'].errors }" (keyup)="onEmailChange($event)">
+                    <div *ngIf="f['email'].errors" class="invalid-feedback">
+                        <div *ngIf="f['email'].errors['email']">Email must be a valid email address</div>
+                    </div>
                 </mat-form-field>
                 <!-- <div>
                     <button mat-raised-button class="mx-2" (click)="openDialog()">Submit</button>
@@ -91,14 +94,26 @@
             <div class="row">
                 <div class="col-6">
                     <!-- <form class="example-form align-items-center "> -->
-                        <mat-form-field class="example-full-width w-100">
+                        <!-- <mat-form-field class="example-full-width w-100">
                             <mat-label>Select Parameter</mat-label>
                             <mat-select class="align-items-center" formControlName="parameter">
                             <mat-option value="one">Parameter 1</mat-option>
                             <mat-option value="two">Parameter 2</mat-option>
                             <mat-option value="two">Parameter 3</mat-option>
                             </mat-select>
+                        </mat-form-field> -->
+
+                        <mat-form-field class="example-full-width w-100">
+                            <mat-label>Choose Parameter</mat-label>
+                            <input type="text" placeholder="" aria-label="Parameter" matInput
+                                [matAutocomplete]="auto2" formControlName="parameter" [formControl]="myControl3">
+                            <mat-autocomplete autoActiveFirstOption #auto2="matAutocomplete" (optionSelected)="OnActionParameterselected($event.option)">
+                                <mat-option *ngFor="let option3 of filteredActionParameterOptions | async" [value]="option3">
+                                    {{option3}}
+                                </mat-option>
+                            </mat-autocomplete>
                         </mat-form-field>
+                        
                     <!-- </form> -->
                 </div>
                 <div class="col-6">
@@ -131,10 +146,11 @@
             myForm.controls['inputValue'].value == '' || 
             myForm.controls['email'].value == '' && 
             (myForm.controls['setInput'].value == '' || 
-            myForm.controls['parameter'].value == ''))">Set Rule & Action
+            myForm.controls['parameter'].value == ''))" (click)="setRule()">Set Rule & Action
             </button>
             <!-- <button type="button" class="btn btn-primary" *ngIf="emailStatus || setParameterStatus">Set Rule & Action</button> -->
         </div>
+        <span class="text-center">{{msg}}</span>
     </div>
     <hr>
 
@@ -150,7 +166,7 @@
             
                 <div class="col-md-6 ">
                     <span class="text-body-tertiary">Fetch Previous Day Data</span>
-                    <button class="w-100 mt-2" mat-raised-button (click)="fetchPreviousData()">Fetch Previous Day Data</button>
+                    <button class="w-100 mt-2" mat-raised-button (click)="fetchPreviousData()" [disabled]="(myForm.controls['deviceName'].value == '' || myForm.controls['parameterName'].value == '')">Fetch Previous Day Data</button>
                 </div>
             </div>
         </div>
@@ -177,12 +193,12 @@
         <table class="table">
             <thead>
               <tr>
-                <th scope="col">Data</th>
+                <th scope="col">Value</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>5400</td>
+                <td>{{previousValue}}</td>
               </tr>
             </tbody>
           </table>

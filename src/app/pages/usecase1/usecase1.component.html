@@ -60,8 +60,31 @@
     <div class="row">
         <p>Actions</p>
         <div class="d-flex align-items-center">
-            <button mat-raised-button (click)="emailShow()">Email Notification</button>
-            <button mat-raised-button class="mx-2" (click)="parameterShow()">Set Parameter</button>
+            <button mat-raised-button (click)="emailShow()"
+
+            [disabled]="(myForm.controls['deviceName'].value == '' ||
+
+            myForm.controls['parameterName'].value == '' ||
+
+            myForm.controls['operators'].value == '' ||
+
+            myForm.controls['inputValue'].value == '')"
+
+            >Email Notification</button>
+
+           
+
+            <button mat-raised-button class="mx-2" (click)="parameterShow()"
+
+            [disabled]="(myForm.controls['deviceName'].value == '' ||
+
+            myForm.controls['parameterName'].value == '' ||
+
+            myForm.controls['operators'].value == '' ||
+
+            myForm.controls['inputValue'].value == '')">Set Parameter</button>
+            <!-- <button mat-raised-button (click)="emailShow()">Email Notification</button>
+            <button mat-raised-button class="mx-2" (click)="parameterShow()">Set Parameter</button> -->
             <!-- <button mat-raised-button class="mx-2" (click)="setValueShow()">Input Set Value</button> -->
         </div>
     </div>

@@ -1,0 +1,18 @@
+<div class="full-height">
+    <app-header></app-header>
+    <div class="page-content">
+        <mat-sidenav-container class="sidebar-container">
+            <mat-sidenav mode="side" opened={{opened}}>
+                <app-sidenav></app-sidenav>
+            </mat-sidenav>
+        
+            <mat-sidenav-content>
+                <div class="p-3">
+                    <div>
+                        <router-outlet></router-outlet>
+                    </div> 
+                </div>
+            </mat-sidenav-content>
+        </mat-sidenav-container>
+    </div>
+</div>

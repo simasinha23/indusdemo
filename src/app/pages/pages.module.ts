@@ -18,9 +18,13 @@ import { MatDialogModule} from '@angular/material/dialog';
 
 import { ProfileComponent } from './profile/profile.component';
 import { HomeComponent } from './home/home.component';
+import { Usecase1Component } from './usecase1/usecase1.component';
+import { LoaderComponent } from './loader/loader.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ViewRuleComponent } from './view-rule/view-rule.component';
 import { HeaderComponent } from '../common/header/header.component';
 import { SidenavComponent } from '../common/sidenav/sidenav.component';
-import { Usecase1Component } from './usecase1/usecase1.component';
+import { PagesComponent } from './pages.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +32,10 @@ import { Usecase1Component } from './usecase1/usecase1.component';
     HomeComponent,
     HeaderComponent,
     SidenavComponent,
-    Usecase1Component 
+    Usecase1Component,
+    LoaderComponent,
+    ViewRuleComponent,
+    PagesComponent
   ],
   imports: [
     CommonModule,
@@ -49,6 +56,7 @@ import { Usecase1Component } from './usecase1/usecase1.component';
     MatFormFieldModule,
     MatInputModule,
     MatDialogModule,
+    MatProgressSpinnerModule
   ]
 })
 export class PagesModule { }

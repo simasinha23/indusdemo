@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiServiceService } from './api-service.service';
-import { SharedService } from './shared.service';
+import { ApiServiceService } from '../api-service.service';
+import { SharedService } from '../shared.service';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  selector: 'pages-root',
+  templateUrl: './pages.component.html'
 })
-export class AppComponent implements OnInit{
+export class PagesComponent implements OnInit{
   title = 'New-TowerApp';
   loginDisplay = false;
   events: string[] = [];
@@ -16,10 +15,10 @@ export class AppComponent implements OnInit{
   }
 
   ngOnInit(){
-    // this.apiService.initializeApp().subscribe(res => {
-    //   let response = Object.values(res);
-    //   localStorage.setItem('token',response[0])
-    // });
+    this.apiService.initializeApp().subscribe(res => {
+      let response = Object.values(res);
+      localStorage.setItem('token',response[0])
+    });
   }
   
 
